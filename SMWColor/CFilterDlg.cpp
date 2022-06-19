@@ -27,11 +27,9 @@ void CFilterDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO1, m_CBoxFilter);
 	DDX_Control(pDX, IDC_EDIT1, m_EditKSize);
 	DDX_Control(pDX, IDC_SPIN1, m_SpinKSize);
-	DDX_Control(pDX, IDC_SPIN4, m_SpinKSize2);
 	DDX_Control(pDX, IDC_EDIT2, m_EditSigma);
 	DDX_Control(pDX, IDC_EDIT3, m_EditSigma2);
 	DDX_Control(pDX, IDC_SPIN2, m_SpinSigma);
-	DDX_Control(pDX, IDC_SPIN3, m_SpinSigma2);
 }
 
 
@@ -39,8 +37,7 @@ BEGIN_MESSAGE_MAP(CFilterDlg, CDialogEx)
 	ON_CBN_SELCHANGE(IDC_COMBO1, &CFilterDlg::OnCbnSelchangeCombo1)
 	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN1, &CFilterDlg::OnDeltaposSpin1)
 	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN2, &CFilterDlg::OnDeltaposSpin2)
-	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN3, &CFilterDlg::OnDeltaposSpin3)
-	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN4, &CFilterDlg::OnDeltaposSpin4)
+	//ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN3, &CFilterDlg::OnDeltaposSpin3)
 
 	ON_EN_CHANGE(IDC_EDIT1, &CFilterDlg::OnEnChangeEdit1)
 	ON_EN_CHANGE(IDC_EDIT2, &CFilterDlg::OnEnChangeEdit2)
@@ -81,9 +78,6 @@ BOOL CFilterDlg::OnInitDialog()
 	m_SpinSigma.SetRange(1, 10);
 	m_SpinSigma.SetPos(0);
 
-	m_EditSigma2.SetWindowTextW(_T("1"));
-	m_SpinSigma2.SetRange(1, 10);
-	m_SpinSigma2.SetPos(0);
 
 
 	return TRUE;  // return TRUE unless you set the focus to a control
@@ -135,39 +129,39 @@ void CFilterDlg::OnDeltaposSpin2(NMHDR* pNMHDR, LRESULT* pResult)
 }
 
 
-void CFilterDlg::OnDeltaposSpin3(NMHDR* pNMHDR, LRESULT* pResult)
-{
-	LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-
-	CString sVal;
-	sVal.Format(_T("%d\n"), pNMUpDown->iPos);
-	m_EditSigma2.SetWindowTextW(sVal);
-
-	if (m_FilterType == 9)
-	{
-		m_sigma2 = (FLOAT)pNMUpDown->iPos;
-	}
-	*pResult = 0;
-}
-
-void CFilterDlg::OnDeltaposSpin4(NMHDR* pNMHDR, LRESULT* pResult)
-{
-	LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-
-	int ival = pNMUpDown->iPos + pNMUpDown->iDelta;
-	ival = ival <= 0 ? 0 : ival;
-
-	m_FilterSize2 = 3 + ival + 2;
-
-	CString sVal;
-	sVal.Format(_T("%d\n"), m_FilterSize);
-	m_EditKSize2.SetWindowTextW(sVal);
-
-	*pResult = 0;
-}
-
+//void CFilterDlg::OnDeltaposSpin3(NMHDR* pNMHDR, LRESULT* pResult)
+//{
+//	LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
+//	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+//
+//	CString sVal;
+//	sVal.Format(_T("%d\n"), pNMUpDown->iPos);
+//	m_EditSigma2.SetWindowTextW(sVal);
+//
+//	if (m_FilterType == 9)
+//	{
+//		m_sigma2 = (FLOAT)pNMUpDown->iPos;
+//	}
+//	*pResult = 0;
+//}
+//
+//void CFilterDlg::OnDeltaposSpin4(NMHDR* pNMHDR, LRESULT* pResult)
+//{
+//	LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
+//	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+//
+//	int ival = pNMUpDown->iPos + pNMUpDown->iDelta;
+//	ival = ival <= 0 ? 0 : ival;
+//
+//	m_FilterSize2 = 3 + ival + 2;
+//
+//	CString sVal;
+//	sVal.Format(_T("%d\n"), m_FilterSize);
+//	m_EditKSize2.SetWindowTextW(sVal);
+//
+//	*pResult = 0;
+//}
+//
 void CFilterDlg::OnEnChangeEdit1()
 {
 	// TODO:  RICHEDIT 컨트롤인 경우, 이 컨트롤은

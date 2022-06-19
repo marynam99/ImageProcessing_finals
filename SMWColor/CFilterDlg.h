@@ -30,7 +30,6 @@ public:
 	CSpinButtonCtrl m_SpinKSize;
 	CSpinButtonCtrl m_SpinKSize2;
 	CSpinButtonCtrl m_SpinSigma;
-	CSpinButtonCtrl m_SpinSigma2;
 	virtual BOOL OnInitDialog();
 	afx_msg void OnCbnSelchangeCombo1();
 
@@ -38,11 +37,9 @@ public:
 	int m_FilterSize = 3;
 	int m_FilterSize2 = 3;
 	FLOAT m_sigma = 1.;
-	FLOAT m_sigma2 = 1.;
 	afx_msg void OnDeltaposSpin1(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnDeltaposSpin2(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnDeltaposSpin3(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnDeltaposSpin4(NMHDR* pNMHDR, LRESULT* pResult);
+	//afx_msg void OnDeltaposSpin3(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnEnChangeEdit1();
 	afx_msg void OnEnChangeEdit2();
 	afx_msg void OnEnChangeEdit3();

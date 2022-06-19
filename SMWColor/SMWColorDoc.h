@@ -66,7 +66,7 @@ public:
 	void HighFrequencyBandPassFilter(CDib& dib, int ksize);
 	void HighBoost(CDib& dib, int ksize);
 	void LoG(CDib& dib, int ksize, FLOAT sigma);
-	void DoG(CDib& dib, int ksize, FLOAT sigma, FLOAT sigma2);
+	void DoG(CDib& dib, int ksize, FLOAT sigma);
 	void OnDifferenceHorizontal(CDib& dib);
 	void OnDifferenceVertical(CDib& dib);
 	void OnDifferenceHomogeneousoperator(CDib& dib);

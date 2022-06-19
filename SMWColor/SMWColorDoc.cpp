@@ -745,7 +745,7 @@ void CSMWColorDoc::OnRegionprocessingSelectfilter(CDib& dib)
 		int FilterSize = dlg.m_FilterSize;
 		int FilterType = dlg.m_FilterType;
 		FLOAT Sigma  = dlg.m_sigma;
-		FLOAT Sigma2 = dlg.m_sigma2;
+		//FLOAT Sigma2 = dlg.m_sigma2;
 		switch (FilterType)
 		{
 		case 0:
@@ -773,7 +773,7 @@ void CSMWColorDoc::OnRegionprocessingSelectfilter(CDib& dib)
 			LoG(dib, FilterSize, Sigma);
 			break;
 		case 8:
-			DoG(dib, FilterSize, Sigma, Sigma2);
+			DoG(dib, FilterSize, Sigma);
 			break;
 		case 9:
 			break;
@@ -1090,44 +1090,38 @@ void CSMWColorDoc::LoG(CDib& dib, int ksize, FLOAT sigma)
 	OnDifferenceLaplacian(dib);
 }
 
-void CSMWColorDoc::DoG(CDib& dib, int ksize, FLOAT sigma, FLOAT sigma2)
+void CSMWColorDoc::DoG(CDib& dib, int ksize, FLOAT sigma)
 {
 	// TODO: 여기에 구현 코드 추가.
-	register int i, j, n, m;
+	register int i, j;
 	int w = dib.GetWidth();
 	int h = dib.GetHeight();
-	int margin = ksize / 2;
 
-	// 마스크 생성
-	FLOAT** mask = Alloc2DMem(ksize, ksize);
-	//FLOAT sigma = 1.;
-	FLOAT r, s1 = 2. * sigma  * sigma;
-	FLOAT s2   = 2. * sigma2 * sigma2;
-	FLOAT sum = 0.;
+	ksize = 3;
+	int ksize2 = 5;
+	FLOAT sigma1 = 3.2;
+	FLOAT sigma2 = 2.0;
 
-	for (i = -margin; i <= margin; i++)
-	{
-		for (j = -margin; j <= margin; j++)
-		{
-			r = sqrt(i * i + j * j);
-			mask[i + margin][j + margin] =
-				(exp(-(r * r) / s1)) / (M_PI * s1)- (exp(-(r * r) / s2)) / (M_PI * s2); // 이 연산만 가지고는 mask 값이 1 넘음
-			sum += mask[i + margin][j + margin];
-		}
+	if (dib.GetBitCount() == 8) {
+
 	}
-	// Normalization: 전체 합이 1이 되도록 각 값을 sum으로 나눔
-	for (i = 0; i < ksize; i++)
-	{
-		for (j = 0; j < ksize; j++)
-		{
-			mask[i][j] /= sum;
-		}
-	}
+	else if (dib.GetBitCount() == 24) {
 
-	// 컬러
-	if (dib.GetBitCount() == 24)
-	{
-		ConvolutionProcessColor(dib, mask, ksize);
+		CDib ndib(dib);
+		GaussianBlurring(dib, ksize2, sigma1);
+		GaussianBlurring(ndib, ksize, sigma2);
+
+		RGBBYTE** ptr = dib.GetRGBPtr();
+		RGBBYTE** ptr2 = ndib.GetRGBPtr();
+
+		for (i = 0; i < h; i++) {
+			for (j = 0; j < w; j++) {
+				ptr[i][j].r = limit(ptr[i][j].r - ptr2[i][j].r);
+				ptr[i][j].g = limit(ptr[i][j].g - ptr2[i][j].g);
+				ptr[i][j].b = limit(ptr[i][j].b - ptr2[i][j].b);
+			}
+		}
+
 	}
 }
 
@@ -1535,7 +1529,64 @@ void CSMWColorDoc::OnGeometrictransformationTranslation(CDib& dib)
 void CSMWColorDoc::OnGeometrictransformationRotation(CDib& dib)
 {
 	// TODO: 여기에 구현 코드 추가.
-	
+	register int i, j;
+	int w = dib.GetWidth();
+	int h = dib.GetHeight();
+
+	int h_center = h / 2;
+	int w_center = w / 2;
+	int degree = 45;
+
+	int h_new, w_new;
+	FLOAT radian = (FLOAT)degree * M_PI / 180.0;
+	int H = h * sin(radian) + cos(radian);
+	int W = h * cos(radian) + w * sin(radian);
+
+	if (dib.GetBitCount() == 8) {}
+	else if (dib.GetBitCount() == 24)
+	{
+		RGBBYTE** ptr = dib.GetRGBPtr();
+		FLOAT** temp_r = Alloc2DMem(h, w);
+		FLOAT** temp_g = Alloc2DMem(h, w);
+		FLOAT** temp_b = Alloc2DMem(h, w);
+
+		for (i = 0; i < H; i++)
+		{
+			for (j = 0; j < H; j++)
+			{
+				h_new = (int)((i - h_center) * cos(radian) - (j - w_center) * sin(radian) + h_center);
+				w_new = (int)(-1*(i - h_center) * sin(radian) + (j - w_center) * cos(radian) + w_center);
+
+				if (h_new < 0 || h_new >= h ||
+					w_new < 0 || w_new >= w)
+				{
+					temp_r[i][j] = 0;
+					temp_g[i][j] = 0;
+					temp_b[i][j] = 0;
+				}
+				else
+				{
+					temp_r[i][j] = ptr[h_new][w_new].r;
+					temp_g[i][j] = ptr[h_new][w_new].g;
+					temp_b[i][j] = ptr[h_new][w_new].b;
+				}
+			}
+		}
+
+		for (i = 0; i < H; i++)
+		{
+			for (j = 0; j < W; j++)
+			{
+				ptr[i][j].r = temp_r[i][j];
+				ptr[i][j].g = temp_g[i][j];
+				ptr[i][j].b = temp_b[i][j];
+			}
+		}
+
+		delete[] temp_r;
+		delete[] temp_g;
+		delete[] temp_b;
+	}
 }
 
 void CSMWColorDoc::OnScalingNearest(CDib& dib)
