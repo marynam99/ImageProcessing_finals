@@ -55,6 +55,7 @@ BEGIN_MESSAGE_MAP(CSMWColorView, CScrollView)
 	ON_COMMAND(ID_MORPHOLOGICALPROCESSING_LOGICALOPERATION, &CSMWColorView::OnMorphologicalprocessingLogicaloperation)
 	ON_COMMAND(ID_MORPHOLOGICALPROCESSING_EROSION, &CSMWColorView::OnMorphologicalprocessingErosion)
 	ON_COMMAND(ID_MORPHOLOGICALPROCESSING_DILATION, &CSMWColorView::OnMorphologicalprocessingDilation)
+	ON_COMMAND(ID_GEOMETRICTRANSFORMATION_ROTATION2, &CSMWColorView::OnGeometrictransformationRotation2)
 END_MESSAGE_MAP()
 
 // CSMWColorView construction/destruction
@@ -463,3 +464,15 @@ void CSMWColorView::OnMorphologicalprocessingLogicaloperation()
 	AfxNewImage(dib);
 }
 
+
+
+void CSMWColorView::OnGeometrictransformationRotation2()
+{
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	CSMWColorDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+
+	CDib dib = pDoc->m_Dib;
+	pDoc->OnGeometrictransformationRotation2(dib);
+	AfxNewImage(dib);
+}

@@ -92,11 +92,11 @@
 #define IDC_EDIT1                       1003
 #define IDC_EDIT2                       1004
 #define IDC_SPIN2                       1005
-#define IDC_EDIT3                       1006
+#define IDC_EDIT_SIGMA2                 1006
 #define IDC_EDIT4                       1007
-#define IDC_SPIN3                       1008
-#define IDC_SPIN4                       1009
-#define IDC_EDIT5                       1010
+#define IDC_SPIN_SIGMA2                 1008
+#define IDC_SPIN_KSIZE2                 1011
+#define IDC_EDIT_KSIZE2                 1012
 #define ID_PIXELPROCESSING_INVERSE      32771
 #define ID_HISTOGRAM_DRAW               32773
 #define ID_HISTOGRAMPROCESSING_DRAWHISTOGRAM 32774
@@ -126,13 +126,14 @@
 #define ID_SECONDDERIVATIVE_LOG         32798
 #define ID_SECONDDERIVATIVE_DOG         32799
 #define ID_MORPHOLOGICALPROCESSING_LOGICALOPERATION 32800
+#define ID_GEOMETRICTRANSFORMATION_ROTATION2 32801
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        316
-#define _APS_NEXT_COMMAND_VALUE         32801
+#define _APS_NEXT_COMMAND_VALUE         32802
 #define _APS_NEXT_CONTROL_VALUE         1008
 #define _APS_NEXT_SYMED_VALUE           310
 #endif

@@ -69,6 +69,7 @@ public:
 	afx_msg void OnMorphologicalprocessingLogicaloperation();
 	afx_msg void OnMorphologicalprocessingErosion();
 	afx_msg void OnMorphologicalprocessingDilation();
+	afx_msg void OnGeometrictransformationRotation2();
 };
 
 #ifndef _DEBUG  // debug version in SMWColorView.cpp

@@ -66,7 +66,7 @@ public:
 	void HighFrequencyBandPassFilter(CDib& dib, int ksize);
 	void HighBoost(CDib& dib, int ksize);
 	void LoG(CDib& dib, int ksize, FLOAT sigma);
-	void DoG(CDib& dib, int ksize, FLOAT sigma);
+	void DoG(CDib& dib, int ksize, int ksize2, FLOAT sigma, FLOAT sigma2);
 	void OnDifferenceHorizontal(CDib& dib);
 	void OnDifferenceVertical(CDib& dib);
 	void OnDifferenceHomogeneousoperator(CDib& dib);
@@ -83,4 +83,5 @@ public:
 	void OnMorphologicalprocessingLogicaloperation(CDib& dib);
 	void OnMorphologicalprocessingErosion(CDib& dib);
 	void OnMorphologicalprocessingDilation(CDib& dib);
+	void OnGeometrictransformationRotation2(CDib& dib);
 };

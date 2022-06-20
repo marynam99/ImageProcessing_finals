@@ -743,9 +743,10 @@ void CSMWColorDoc::OnRegionprocessingSelectfilter(CDib& dib)
 	if (dlg.DoModal() == IDOK)
 	{
 		int FilterSize = dlg.m_FilterSize;
+		int FilterSize2 = dlg.m_FilterSize2;
 		int FilterType = dlg.m_FilterType;
 		FLOAT Sigma  = dlg.m_sigma;
-		//FLOAT Sigma2 = dlg.m_sigma2;
+		FLOAT Sigma2 = dlg.m_sigma2;
 		switch (FilterType)
 		{
 		case 0:
@@ -773,7 +774,7 @@ void CSMWColorDoc::OnRegionprocessingSelectfilter(CDib& dib)
 			LoG(dib, FilterSize, Sigma);
 			break;
 		case 8:
-			DoG(dib, FilterSize, Sigma);
+			DoG(dib, FilterSize, FilterSize2, Sigma, Sigma2);
 			break;
 		case 9:
 			break;
@@ -1090,17 +1091,18 @@ void CSMWColorDoc::LoG(CDib& dib, int ksize, FLOAT sigma)
 	OnDifferenceLaplacian(dib);
 }
 
-void CSMWColorDoc::DoG(CDib& dib, int ksize, FLOAT sigma)
+void CSMWColorDoc::DoG(CDib& dib, int ksize, int ksize2, FLOAT sigma, FLOAT sigma2)
 {
 	// TODO: 여기에 구현 코드 추가.
 	register int i, j;
 	int w = dib.GetWidth();
 	int h = dib.GetHeight();
 
-	ksize = 3;
+	/*ksize = 3;
 	int ksize2 = 5;
 	FLOAT sigma1 = 3.2;
-	FLOAT sigma2 = 2.0;
+	FLOAT sigma2 = 2.0;*/
+
 
 	if (dib.GetBitCount() == 8) {
 
@@ -1108,7 +1110,7 @@ void CSMWColorDoc::DoG(CDib& dib, int ksize, FLOAT sigma)
 	else if (dib.GetBitCount() == 24) {
 
 		CDib ndib(dib);
-		GaussianBlurring(dib, ksize2, sigma1);
+		GaussianBlurring(dib, ksize2, sigma);
 		GaussianBlurring(ndib, ksize, sigma2);
 
 		RGBBYTE** ptr = dib.GetRGBPtr();
@@ -1538,9 +1540,8 @@ void CSMWColorDoc::OnGeometrictransformationRotation(CDib& dib)
 	int degree = 45;
 
 	int h_new, w_new;
+
 	FLOAT radian = (FLOAT)degree * M_PI / 180.0;
-	int H = h * sin(radian) + cos(radian);
-	int W = h * cos(radian) + w * sin(radian);
 
 	if (dib.GetBitCount() == 8) {}
 	else if (dib.GetBitCount() == 24)
@@ -1550,12 +1551,12 @@ void CSMWColorDoc::OnGeometrictransformationRotation(CDib& dib)
 		FLOAT** temp_g = Alloc2DMem(h, w);
 		FLOAT** temp_b = Alloc2DMem(h, w);
 
-		for (i = 0; i < H; i++)
+		for (i = 0; i < h; i++)
 		{
-			for (j = 0; j < H; j++)
+			for (j = 0; j < w; j++)
 			{
-				h_new = (int)((i - h_center) * cos(radian) - (j - w_center) * sin(radian) + h_center);
-				w_new = (int)(-1*(i - h_center) * sin(radian) + (j - w_center) * cos(radian) + w_center);
+				h_new = (int)((i - h_center) * cos(radian) - (j - w_center) * sin(radian) + h_center); // i = x
+				w_new = (int)((i - h_center) * sin(radian) + (j - w_center) * cos(radian) + w_center); // j = y
 
 				if (h_new < 0 || h_new >= h ||
 					w_new < 0 || w_new >= w)
@@ -1572,6 +1573,73 @@ void CSMWColorDoc::OnGeometrictransformationRotation(CDib& dib)
 				}
 			}
 		}
+
+		for (i = 0; i < h; i++)
+		{
+			for (j = 0; j < w; j++)
+			{
+				ptr[i][j].r = temp_r[i][j];
+				ptr[i][j].g = temp_g[i][j];
+				ptr[i][j].b = temp_b[i][j];
+			}
+		}
+
+		delete[] temp_r;
+		delete[] temp_g;
+		delete[] temp_b;
+	}
+}
+
+void CSMWColorDoc::OnGeometrictransformationRotation2(CDib& dib)
+{
+	// TODO: 여기에 구현 코드 추가.
+	register int i, j;
+	int w = dib.GetWidth();
+	int h = dib.GetHeight();
+
+	int h_center = h / 2;
+	int w_center = w / 2;
+	int degree = 45;
+
+	int h_new, w_new;
+	FLOAT radian = (FLOAT)degree * M_PI / 180.0;
+	int W = h * sin(radian) + w * cos(radian);
+	int H = h * cos(radian) + w * sin(radian);
+
+	if (dib.GetBitCount() == 8) {}
+	else if (dib.GetBitCount() == 24)
+	{
+		RGBBYTE** ptr = dib.GetRGBPtr();
+		FLOAT** temp_r = Alloc2DMem(H, W);
+		FLOAT** temp_g = Alloc2DMem(H, W);
+		FLOAT** temp_b = Alloc2DMem(H, W);
+
+		for (i = 0; i < H; i++)
+		{
+			for (j = 0; j < W; j++)
+			{
+				//h_new = (int)(i * cos(radian) - j * sin(radian) + h * sin(radian)); // 딱 맞음
+				//w_new = (int)(i * sin(radian) + j * cos(radian) - h * sin(radian));
+				h_new = (int)(i * cos(radian) - (j - h * sin(radian)) * sin(radian)); 
+				w_new = (int)(i * sin(radian) + (j - h * sin(radian)) * cos(radian));
+
+				if (h_new < 0 || h_new >= h ||
+					w_new < 0 || w_new >= w)
+				{
+					temp_r[i][j] = 0;
+					temp_g[i][j] = 0;
+					temp_b[i][j] = 0;
+				}
+				else
+				{
+					temp_r[i][j] = ptr[h_new][w_new].r;
+					temp_g[i][j] = ptr[h_new][w_new].g;
+					temp_b[i][j] = ptr[h_new][w_new].b;
+				}
+			}
+		}
+		dib.CreateRGBImage(W, H);
+		ptr = dib.GetRGBPtr();
 
 		for (i = 0; i < H; i++)
 		{
@@ -1989,5 +2057,3 @@ void CSMWColorDoc::OnMorphologicalprocessingLogicaloperation(CDib& dib)
 	}
 
 }
-
-
